@@ -1,0 +1,129 @@
+<!-- signup.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Signup</title>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+form {
+  width: 50%;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+button[type="submit"] {
+  width: 100%;
+  height: 40px;
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+#log{
+    display: flex;
+    margin-top: 60px;
+}
+</style>
+</head>
+<body>
+  <div id="log">
+    <h1>Signup</h1>
+  <form id="signup-form">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <label for="confirm-password">Confirm Password:</label>
+    <input type="password" id="confirm-password" name="confirm-password" required><br><br>
+    <button type="submit">Signup</button>
+  </form>
+
+
+
+  <h1 id="login-header" style="display:none;">Login</h1>
+  <form id="login-form" style="display:none;">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <button type="submit">Login</button>
+  </form>
+
+  
+  <script>
+    // Get the forms
+    const signupForm = document.getElementById('signup-form');
+    const loginForm = document.getElementById('login-form');
+    const loginHeader = document.getElementById('login-header');
+    
+    // Function to store data in local storage
+    function storeData(username, password) {
+      localStorage.setItem('username', username);
+      localStorage.setItem('password', password);
+    }
+    
+    // Function to check login credentials
+    function checkLogin(username, password) {
+      const storedUsername = localStorage.getItem('username').toString();
+      const storedPassword = localStorage.getItem('password').toString();
+      if (username === storedUsername && password === storedPassword) {
+        // Only redirect to dashboard if credentials are valid
+        window.location.href = 'dashboard.html';
+        alert('Login successful!');
+      } else {
+        alert('Invalid username or password');
+      }
+    }
+    
+    // Add event listeners to forms
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      if (password === confirmPassword) {
+        storeData(username, password);
+        alert('Signup successful!');
+        loginHeader.style.display = 'block';
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+      } else {
+        alert('Passwords do not match');
+      }
+    });
+    
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      checkLogin(username, password);
+    });
+  </script>
+</body>
+</html>

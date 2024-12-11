@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .a {
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Canvas element for chart -->
+  <canvas class="a" id="myChart" width="400" height="200"></canvas>
+  <canvas class="a" id="myChart2" width="400" height="200"></canvas>
+  
+  <script>
+    // Data for chart
+    const data = {
+      labels: ['Food', 'Travel', 'Rent', 'Entertainment', 'Other'],
+      datasets: [{
+        label: 'Expenses',//income
+        data: [600, 150, 300, 100, 50],
+        backgroundColor: [
+          'green',
+          'blue',
+          'yellow',
+          'gray',
+          'lightblue'
+        ],
+        
+      }]
+    };
+    
+    // console.log(data.datasets[0].data);
+    data.datasets[0].data.push(888888,44)
+    // console.log(data.datasets[0].data);
+
+
+    
+    // Create chart
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'pie', // or 'bar'
+    //   type:'bar',
+      data: data,
+      options: {
+        title: {
+          display: true,
+          text: 'Expenses Chart'
+        }
+      }
+    });
+
+    const data1 = {
+      labels: ['Food', 'Travel', 'Rent', 'Entertainment', 'Other'],
+      datasets: [{
+        label: 'Income',//income
+        data: [600, 150, 300, 100, 50],
+        backgroundColor: [
+          'green',
+          'blue',
+          'yellow',
+          'gray',
+          'lightblue'
+        ],
+        
+      }]
+    };
+    const ctx2 = document.getElementById('myChart2').getContext('2d');
+    const pieChart = new Chart(ctx2, {
+      type: 'pie',
+      data: data1,
+      options: {
+        title: {
+          display: true,
+          text: 'income  Chart'
+        }
+      }
+    });
+  </script>
+</html>

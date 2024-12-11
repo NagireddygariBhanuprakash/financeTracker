@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+      *{
+        font-size: 20px;
+        font-weight: 200;
+      }
+        .a {
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #financeApp{
+     justify-content: center;
+     align-items: center;
+     border: 2px solid black;
+     background-color: lightblue;
+
+    }
+    #financeApp > * {
+  margin-left: 150px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+    input{
+      width: 50%;
+      height: 50px;
+    }
+    #transactionTable{
+      margin-left: 500px;
+    }
+    button {
+  background-image: linear-gradient(to right, #4CAF50, #8BC34A);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-image: linear-gradient(to right, #3e8e41, #66BB6A);
+}
+
+#h2tag{
+  margin-right: 100px;
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  border: 2px solid black;
+}
+#transactionTable {
+  width: 80%;
+  margin: 40px auto;
+  border-collapse: collapse;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#transactionTable th {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+#transactionTable td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#transactionTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#transactionTable tr:hover {
+  background-color: #e2e2e2;
+}
+
+    </style>
+</head>
+<body>
+  <h1 style="background: #d44f01"; id="h2tag">Welcome to personal 🔢Financial Tracker Application</h1>
+    <div id="financeApp">
+        <h2 id="h2tag">🔢Financial inputs🔢</h2>
+        <div class="input-group">
+            <label for="type">Type:</label>
+            <select id="type">
+                <option value="Inflow">Inflow</option>
+                <option value="Outflow">Outflow</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" required placeholder="Enter amount" >
+        </div>
+        
+        <div class="input-group">
+            <label for="category">Category:</label>
+            <select id="category">
+                <option value="salary" >Salary</option> 
+                <option value="Stocks" >Stocks</option> 
+                <option value="incomesource" >income from other source</option> 
+                <option value="food">Food</option>
+                <option value="rent">Rent</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="transport">Transport</option>
+                <option value="ExpenceOther"> ExpenceOther</option>
+            </select>
+            
+        </div>
+        
+        <div class="input-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+        </div>
+        
+        <button  onclick="addTransaction()">Add Transaction</button>
+        
+        <h1 style="background: #d44f01;" id="h2tag">Transaction entries</h1>
+        <table id="transactionTable">
+          <thead>
+            <tr id="summary">
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Category</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="transactionBody">
+          </tbody>
+        </table>
+        
+        
+      <h2  id="h2tag">🤑🫰Monthly Summary 🤑🫰</h2>
+        <p id="Total-Income">Total Income: ₹<span id="totalIncome">0</span></p>
+        <p id="Total-Expenses">Total Expenses: ₹<span id="totalExpenses">0</span></p>
+        <p id="Savings">Savings: ₹<span id="savings">0</span></p>
+        
+        <div class="chart-container">
+            <canvas id="expenseChart"></canvas>
+        </div>
+    </div>
+    <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Canvas element for chart -->
+   <div id="statistics">
+    <span style="background-color: #d44f01;margin-left: 40%;margin-right: 40%; display: flex;justify-content: center;align-items: center;"  id="canvas"> Statistics</span>
+  <canvas class="a" id="myChart" width="400" height="200"></canvas>
+  
+   </div>
+
+  
+</body>
+<script>
+  let income = 0;
+let expense = 0;
+let transactions = [];
+
+const chartData = {
+  labels: [],
+  datasets: [
+    {
+      label: 'Inflow',
+      data: [],
+      backgroundColor: ['green', 'lightgreen', 'yellowgreen', 'greenyellow', 'chartreuse'],
+    },
+    {
+      label: 'Outflow',
+      data: [],
+      backgroundColor: ['red', 'lightcoral', 'salmon', 'orangered', 'tomato'],
+    },
+  ],
+};
+
+const ctx = document.getElementById('myChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'bar',
+  data: chartData,
+  options: {
+    title: {
+      display: true,
+      text: 'Transaction Chart',
+    },
+  },
+});
+
+// Save data to local storage
+function saveData() {
+  localStorage.setItem('income', income);
+  localStorage.setItem('expense', expense);
+  localStorage.setItem('transactions', JSON.stringify(transactions));
+}
+
+// Load data from local storage
+function loadData() {
+  income = parseFloat(localStorage.getItem('income')) || 0;
+  expense = parseFloat(localStorage.getItem('expense')) || 0;
+  transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+  document.getElementById('totalIncome').innerText = income;
+  document.getElementById('totalExpenses').innerText = expense;
+  updateTable();
+  updateChartData();
+}
+
+// Add transaction
+function addTransaction() {
+  const type = document.getElementById('type').value;
+  const amount = parseFloat(document.getElementById('amount').value);
+  const category = document.getElementById('category').value;
+  const date = document.getElementById('date').value;
+
+  transactions.push({ type, amount, category, date });
+  updateSummary(type, amount);
+  updateTable();
+  updateChartData();
+  saveData();
+}
+
+// Update summary
+function updateSummary(type, amount) {
+  if (type === 'Inflow') {
+    income += amount;
+    document.getElementById('totalIncome').innerText = income;
+  } else if (type === 'Outflow') {
+    expense += amount;
+    document.getElementById('totalExpenses').innerText = expense;
+  }
+  document.getElementById('savings').innerText = income - expense;
+ 
+}
+
+// Update table
+// Update table function
+function updateTable() {
+  const tableBody = document.getElementById('transactionBody');
+  tableBody.innerHTML = '';
+
+  transactions.forEach((transaction, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${transaction.type}</td>
+      <td>${transaction.amount}</td>
+      <td>${transaction.category}</td>
+      <td>${transaction.date}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+
+// Update chart data
+function updateChartData() {
+  chartData.labels = transactions.map(transaction => transaction.category);
+  chartData.datasets[0].data = transactions.filter(transaction => transaction.type === 'Inflow').map(transaction => transaction.amount);
+  chartData.datasets[1].data = transactions.filter(transaction => transaction.type === 'Outflow').map(transaction => transaction.amount);
+  chart.update();
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', loadData);
+document.getElementById('add-transaction').addEventListener('click', addTransaction);
+
+
+</script>
+</html>
